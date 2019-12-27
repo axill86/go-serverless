@@ -2,7 +2,17 @@ BUILD_IMAGE := golang:1.13
 OS := $(if $(GOOS),$(GOOS),$(shell go env GOOS))
 ARCH := $(if $(GOARCH),$(GOARCH),$(shell go env GOARCH))
 OUTDIR := bin
-OUTDIR_LAMBDA := bin_lambda
+DISTDIR := dist
+BUILD_COMMAND := docker run --rm  \
+                 	-u $$(id -u):$$(id -g) \
+                 	-v $$(pwd):/src \
+                 	-v $$(pwd)/.go/bin:/go/bin                \
+                    -v $$(pwd)/.go/cache:/.cache                       \
+                     -w /src
+DOCKER_BUILD_COMMAND := /bin/sh "./scripts/build.sh"
+LAMBDA_HANDLER_NAMES := $(notdir $(wildcard cmd/*))
+ZIPS := $(addprefix $(DISTDIR)/, $(addsuffix .zip, $(LAMBDA_HANDLER_NAMES)))
+
 
 .PHONY: clean build all
 
@@ -14,20 +24,31 @@ endef
 
 clean:
 	@rm -rf .go
-	@rm -rf ${OUTDIR_LAMBDA}
+	@rm -rf ${DISTDIR}
 	@rm -rf ${OUTDIR}
 
 build: clean
 	@echo 'building project'
 	$(ENV)
-	docker run --rm  \
-	-u $$(id -u):$$(id -g) \
-	-v $$(pwd):/src \
-	-v $$(pwd)/.go/bin:/go/bin                \
-    -v $$(pwd)/.go/cache:/.cache                       \
-    --env ARCH=${ARCH} \
-    --env OS=${OS} \
-	-w /src \
-	$(BUILD_IMAGE) /bin/sh "./scripts/build.sh"
+	$(BUILD_COMMAND) --env ARCH=${ARCH} --env OS=${OS} $(BUILD_IMAGE) $(DOCKER_BUILD_COMMAND)
 	[[ -d $(OUTDIR) ]] || mkdir $(OUTDIR)
 	cp -r ./.go/bin/ $(OUTDIR)
+#Builds the executuable for lambda
+build-lambda: OS := "linux"
+build-lambda: clean
+	@echo ${OS}
+	$(BUILD_COMMAND) --env ARCH=${ARCH} --env OS=${OS} $(BUILD_IMAGE) $(DOCKER_BUILD_COMMAND)
+	[[ -d $(OUTDIR) ]] || mkdir $(OUTDIR)
+	cp -r ./.go/bin/ $(OUTDIR)
+
+$(ZIPS) : build-lambda
+	@echo  $@ $*
+	[[ -d $(DISTDIR) ]] || mkdir $(DISTDIR)
+	zip -o $@ $(OUTDIR)/$(basename $(notdir $@))
+
+dist: $(ZIPS)
+
+echo:
+	@echo $(ZIPS)
+
+
