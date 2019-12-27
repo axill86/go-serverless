@@ -3,8 +3,8 @@ module github.com/axill86/go-serverless
 go 1.13
 
 require (
-	github.com/aws/aws-lambda-go v1.13.3 // indirect
-	github.com/awslabs/aws-lambda-go-api-proxy v0.5.0 // indirect
+	github.com/aws/aws-lambda-go v1.13.3
+	github.com/awslabs/aws-lambda-go-api-proxy v0.5.0
 	github.com/gin-contrib/location v0.0.1
 	github.com/gin-gonic/gin v1.5.0
 	github.com/go-playground/universal-translator v0.17.0 // indirect

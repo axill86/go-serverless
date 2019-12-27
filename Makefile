@@ -14,7 +14,7 @@ LAMBDA_HANDLER_NAMES := $(notdir $(wildcard cmd/*))
 ZIPS := $(addprefix $(DISTDIR)/, $(addsuffix .zip, $(LAMBDA_HANDLER_NAMES)))
 
 
-.PHONY: clean build all
+.PHONY: clean build all dist
 
 define ENV
 @echo 'Docker image: ${BUILD_IMAGE}'
@@ -44,11 +44,13 @@ build-lambda: clean
 $(ZIPS) : build-lambda
 	@echo  $@ $*
 	[[ -d $(DISTDIR) ]] || mkdir $(DISTDIR)
-	zip -o $@ $(OUTDIR)/$(basename $(notdir $@))
+	@zip -j -o $@ $(OUTDIR)/$(basename $(notdir $@))
 
 dist: $(ZIPS)
 
-echo:
-	@echo $(ZIPS)
+deploy: dist
+	terraform init deployments/terraform
+	terraform apply deployments/terraform
 
-
+destroy:
+	terraform destroy deployments/terraform

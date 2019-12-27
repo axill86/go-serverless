@@ -1,7 +1,13 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"github.com/aws/aws-lambda-go/events"
+	"github.com/aws/aws-lambda-go/lambda"
+	ginadapter "github.com/awslabs/aws-lambda-go-api-proxy/gin"
+	"log"
+
 	"github.com/axill86/go-serverless/internal/dao"
 	"github.com/axill86/go-serverless/internal/service"
 	"github.com/gin-contrib/location"
@@ -10,17 +16,24 @@ import (
 )
 
 var orderService service.OrderService
+var r *gin.Engine
+var ginLambda *ginadapter.GinLambda
 
 func init() {
-	orderService = service.NewOrderService(dao.NewOrderDao())
-}
-
-func main() {
 	r := gin.Default()
+	//Init order service
 	r.Use(location.Default())
 	r.POST("/orders", CreateOrderHandler)
 	r.GET("/orders", GetOrderHandler)
-	r.Run(":80")
+	orderService = service.NewOrderService(dao.NewOrderDao())
+	ginLambda = ginadapter.New(r)
+}
+
+func Handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	return ginLambda.ProxyWithContext(ctx, req)
+}
+func main() {
+	lambda.Start(Handler)
 }
 
 func CreateOrderHandler(context *gin.Context) {
@@ -41,6 +54,6 @@ func GetOrderHandler(context *gin.Context) {
 		context.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	fmt.Printf("Got order %#v", order)
+	log.Printf("Got order %#v", order)
 	context.JSON(http.StatusOK, order)
 }
