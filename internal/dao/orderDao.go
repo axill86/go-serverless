@@ -28,7 +28,7 @@ func (dao *staticOrderDao) GetOrder(id string) (domain.Order, error) {
 
 func (dao *staticOrderDao) CreateOrder() (domain.Order, error) {
 	id := uuid.New()
-	return domain.Order{Id: id.String()}, nil
+	return domain.Order{Id: id.String(), Status: domain.CREATED}, nil
 }
 
 func (dao *staticOrderDao) UpdateOrder(order domain.Order) error {

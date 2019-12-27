@@ -10,6 +10,7 @@ Order service provides operations related to orders
 */
 type OrderService interface {
 	CreateOrder() (domain.Order, error)
+	GetOrder(id string) (domain.Order, error)
 }
 
 type orderServiceImp struct {
@@ -20,6 +21,10 @@ type orderServiceImp struct {
 //Returns created order instance
 func (service *orderServiceImp) CreateOrder() (domain.Order, error) {
 	return service.dao.CreateOrder()
+}
+
+func (service *orderServiceImp) GetOrder(id string) (domain.Order, error) {
+	return service.dao.GetOrder(id)
 }
 
 func NewOrderService(orderDao dao.OrderDao) *orderServiceImp {
