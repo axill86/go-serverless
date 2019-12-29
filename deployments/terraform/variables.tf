@@ -11,3 +11,7 @@ variable "lambda-handler" {
 variable "lambda-filename" {
   default = "dist/orderApi.zip"
 }
+
+variable "orders-table-name" {
+  default = "orders"
+}

@@ -12,9 +12,12 @@ BUILD_COMMAND := docker run --rm  \
 DOCKER_BUILD_COMMAND := /bin/sh "./scripts/build.sh"
 LAMBDA_HANDLER_NAMES := $(notdir $(wildcard cmd/*))
 ZIPS := $(addprefix $(DISTDIR)/, $(addsuffix .zip, $(LAMBDA_HANDLER_NAMES)))
+INTERNAL_DIR := internal
+MOCK_DIR := mocks
+SOURCE_FILES := $(wildcard $(INTERNAL_DIR)/*/*.go)
+MOCK_FILES := $(patsubst $(INTERNAL_DIR)%, $(MOCK_DIR)%, $(SOURCE_FILES))
 
-
-.PHONY: clean build all dist
+.PHONY: clean build all dist generate-mocks
 
 define ENV
 @echo 'Docker image: ${BUILD_IMAGE}'
@@ -33,7 +36,7 @@ build: clean
 	$(BUILD_COMMAND) --env ARCH=${ARCH} --env OS=${OS} $(BUILD_IMAGE) $(DOCKER_BUILD_COMMAND)
 	[[ -d $(OUTDIR) ]] || mkdir $(OUTDIR)
 	cp -r ./.go/bin/ $(OUTDIR)
-#Builds the executuable for lambda
+#Builds the executuable for createOrderLambda
 build-lambda: OS := "linux"
 build-lambda: clean
 	@echo ${OS}
@@ -48,9 +51,18 @@ $(ZIPS) : build-lambda
 
 dist: $(ZIPS)
 
-deploy: dist
+deploy:
 	terraform init deployments/terraform
 	terraform apply deployments/terraform
 
 destroy:
+	terraform init deployments/terraform
 	terraform destroy deployments/terraform
+
+$(MOCK_FILES): $(SOURCE_FILES)
+	[[ -d $(MOCK_DIR) ]] || mkdir $(MOCK_DIR)
+	mockgen -source $(patsubst $(MOCK_DIR)%, $(INTERNAL_DIR)%, $@) --destination $@
+
+generate-mocks: $(MOCK_FILES)
+	@echo $(SOURCE_FILES)
+	@echo $(MOCK_FILES)

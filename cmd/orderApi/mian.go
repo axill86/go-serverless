@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/dynamodb"
 	ginadapter "github.com/awslabs/aws-lambda-go-api-proxy/gin"
 	"log"
 
@@ -25,7 +27,13 @@ func init() {
 	r.Use(location.Default())
 	r.POST("/orders", CreateOrderHandler)
 	r.GET("/orders", GetOrderHandler)
-	orderService = service.NewOrderService(dao.NewOrderDao())
+	s, err := session.NewSession()
+	if err != nil {
+		panic(err)
+	}
+	dynamoSession := dynamodb.New(s)
+
+	orderService = service.NewOrderService(dao.NewOrderDao("orders", dynamoSession))
 	ginLambda = ginadapter.New(r)
 }
 
