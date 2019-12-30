@@ -1,5 +1,6 @@
 package dao
 
+//go:generate mockgen -destination=../../mocks/dao/$GOFILE -source $GOFILE
 import (
 	"errors"
 	"github.com/aws/aws-sdk-go/aws"

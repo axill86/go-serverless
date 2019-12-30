@@ -28,7 +28,6 @@ set -x
 #    ./...
 
 #Building each handler to separate executable
-
   go install ./...
 
 

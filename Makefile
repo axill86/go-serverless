@@ -10,6 +10,7 @@ BUILD_COMMAND := docker run --rm  \
                     -v $$(pwd)/.go/cache:/.cache                       \
                      -w /src
 DOCKER_BUILD_COMMAND := /bin/sh "./scripts/build.sh"
+DOCKER_GENERATE_COMMAND := /bin/sh "./scripts/generate.sh"
 LAMBDA_HANDLER_NAMES := $(notdir $(wildcard cmd/*))
 ZIPS := $(addprefix $(DISTDIR)/, $(addsuffix .zip, $(LAMBDA_HANDLER_NAMES)))
 INTERNAL_DIR := internal
@@ -63,6 +64,6 @@ $(MOCK_FILES): $(SOURCE_FILES)
 	[[ -d $(MOCK_DIR) ]] || mkdir $(MOCK_DIR)
 	mockgen -source $(patsubst $(MOCK_DIR)%, $(INTERNAL_DIR)%, $@) --destination $@
 
-generate-mocks: $(MOCK_FILES)
-	@echo $(SOURCE_FILES)
-	@echo $(MOCK_FILES)
+generate-mocks:
+	docker run --rm  -v $$(pwd):/src -w /src $(BUILD_IMAGE) $(DOCKER_GENERATE_COMMAND)
+
