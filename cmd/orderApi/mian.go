@@ -52,7 +52,7 @@ func CreateOrderHandler(context *gin.Context) {
 	}
 	fmt.Printf("Created order %#v", order)
 	context.Status(http.StatusCreated)
-	context.Header("Location", "orders/"+order.Id)
+	context.Header("Location", "orders?id="+order.Id)
 }
 
 func GetOrderHandler(context *gin.Context) {

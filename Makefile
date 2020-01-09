@@ -30,6 +30,7 @@ clean:
 	@rm -rf .go
 	@rm -rf ${DISTDIR}
 	@rm -rf ${OUTDIR}
+	@rm -rf ${MOCK_DIR}
 
 build: clean
 	@echo 'building project'
@@ -60,10 +61,8 @@ destroy:
 	terraform init deployments/terraform
 	terraform destroy deployments/terraform
 
-$(MOCK_FILES): $(SOURCE_FILES)
-	[[ -d $(MOCK_DIR) ]] || mkdir $(MOCK_DIR)
-	mockgen -source $(patsubst $(MOCK_DIR)%, $(INTERNAL_DIR)%, $@) --destination $@
 
 generate-mocks:
-	docker run --rm  -v $$(pwd):/src -w /src $(BUILD_IMAGE) $(DOCKER_GENERATE_COMMAND)
+	# Errors are ignores so far as go:generate does not seem to work fine with internal packages
+	-docker run --rm  -v $$(pwd):/src -w /src $(BUILD_IMAGE) $(DOCKER_GENERATE_COMMAND)
 
