@@ -1,0 +1,2 @@
+variable "orders-table-name" {
+}
