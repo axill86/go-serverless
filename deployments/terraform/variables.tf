@@ -15,3 +15,7 @@ variable "lambda-filename" {
 variable "orders-table-name" {
   default = "orders"
 }
+
+variable "workflow-name" {
+  default = "order-workflow"
+}

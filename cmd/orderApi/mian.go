@@ -50,6 +50,7 @@ func CreateOrderHandler(context *gin.Context) {
 		context.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+	fmt.Printf("Received headers %#v", context.Request.Header)
 	fmt.Printf("Created order %#v", order)
 	context.Status(http.StatusCreated)
 	context.Header("Location", "orders?id="+order.Id)

@@ -6,7 +6,10 @@ module "order-table" {
   source = "./order-table"
   orders-table-name = var.orders-table-name
 }
-
+module "order-workflow" {
+  source = "./order-workflow"
+  workflow-name = var.workflow-name
+}
 module "order-lambda" {
   source = "./order-lambda"
   lambda-name = var.lambda-name
