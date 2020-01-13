@@ -26,6 +26,15 @@ URL of deployed api is provided in tf output
 ``
 https://api-url.execute-api.us-east-1.amazonaws.com/test/orders
 ``
+
+## How to test
+Public endpoint is created on Amazon Api Gateway. In order to create order POST request need to be executed:
+``` curl -v -X POST https://api-url.execute-api.us-east-1.amazonaws.com/test/orders ```
+Expected that **CREATED(201)** is returned with Location header:
+```location: orders?id=<uuid> ```
+TODO: unfortunately, full path is not returned so far. 
+Created resource can be requested via url
+``` curl "https://api-url.execute-api.us-east-1.amazonaws.com/test/orders?id=<uuid>"```
 ## How to destroy
 ``make destroy``
 Terraform will ask for confirmation. Type 'yes' to destroy
