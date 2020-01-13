@@ -28,7 +28,7 @@ https://api-url.execute-api.us-east-1.amazonaws.com/test/orders
 ``
 
 ## How to test
-*
+
 Public endpoint is created on Amazon Api Gateway. In order to create order POST request need to be executed:  
 ``` curl -v -X POST https://api-url.execute-api.us-east-1.amazonaws.com/test/orders ```  
 Expected that **CREATED(201)** is returned with Location header:  
