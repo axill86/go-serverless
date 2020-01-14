@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	ginadapter "github.com/awslabs/aws-lambda-go-api-proxy/gin"
+	"github.com/axill86/go-serverless/internal/dto"
 	"log"
 
 	"github.com/axill86/go-serverless/internal/dao"
@@ -45,7 +46,11 @@ func main() {
 }
 
 func CreateOrderHandler(context *gin.Context) {
-	order, err := orderService.CreateOrder()
+	var dto dto.OrderCreate
+	if err := context.ShouldBindJSON(&dto); err != nil {
+		context.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
+	}
+	order, err := orderService.CreateOrder(dto)
 	if err != nil {
 		context.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

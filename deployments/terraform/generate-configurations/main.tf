@@ -24,13 +24,8 @@ resource "aws_iam_role_policy_attachment" "lambda-logs" {
   role = aws_iam_role.lambda_exec.name
 }
 
-#Inline Policy for Dynamoe DB
+#Inline Policy for Dynamo DB
 data aws_iam_policy_document "dynamo-db-policy" {
-  statement {
-    actions = ["dynamodb:DeleteItem", "dynamodb:DescribeTable", "dynamodb:PutItem", "dynamodb:GetItem"]
-    resources = [var.table-name]
-    effect = "Allow"
-  }
   statement {
     actions = ["logs:CreateLogGroup",
       "logs:CreateLogStream",

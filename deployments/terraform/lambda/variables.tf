@@ -8,6 +8,5 @@ variable "lambda-filename" {
 
 }
 
-variable "table-name" {
+variable "policy-document" {}
 
-}

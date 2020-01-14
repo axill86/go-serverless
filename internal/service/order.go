@@ -3,13 +3,14 @@ package service
 import (
 	"github.com/axill86/go-serverless/internal/dao"
 	"github.com/axill86/go-serverless/internal/domain"
+	"github.com/axill86/go-serverless/internal/dto"
 )
 
 /*
-Order service provides operations related to orders
+OrderCreate service provides operations related to orders
 */
 type OrderService interface {
-	CreateOrder() (domain.Order, error)
+	CreateOrder(dto dto.OrderCreate) (domain.Order, error)
 	GetOrder(id string) (domain.Order, error)
 }
 
@@ -19,8 +20,8 @@ type orderServiceImp struct {
 
 //CreateOrder creates new order and places it for execution.
 //Returns created order instance
-func (service *orderServiceImp) CreateOrder() (domain.Order, error) {
-	return service.dao.CreateOrder()
+func (service *orderServiceImp) CreateOrder(dto dto.OrderCreate) (domain.Order, error) {
+	return service.dao.CreateOrder(dto)
 }
 
 func (service *orderServiceImp) GetOrder(id string) (domain.Order, error) {

@@ -7,12 +7,13 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/axill86/go-serverless/internal/domain"
+	"github.com/axill86/go-serverless/internal/dto"
 	"github.com/google/uuid"
 )
 
 type OrderDao interface {
 	GetOrder(id string) (domain.Order, error)
-	CreateOrder() (domain.Order, error)
+	CreateOrder(dto dto.OrderCreate) (domain.Order, error)
 	UpdateOrder(order domain.Order) error
 }
 
@@ -48,9 +49,9 @@ func (dao *dynamoDbOrderDao) GetOrder(id string) (domain.Order, error) {
 	return result, nil
 }
 
-func (dao *dynamoDbOrderDao) CreateOrder() (domain.Order, error) {
+func (dao *dynamoDbOrderDao) CreateOrder(orderDto dto.OrderCreate) (domain.Order, error) {
 	id := uuid.New().String()
-	order := domain.Order{Id: id, Status: domain.CREATED}
+	order := domain.Order{Id: id, Status: domain.CREATED, Type:orderDto.Type}
 	attributes, err := dynamodbattribute.MarshalMap(order)
 	if err != nil {
 		return order, err

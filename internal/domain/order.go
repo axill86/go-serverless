@@ -12,4 +12,5 @@ type Order struct {
 	Id       string `json:"id"`
 	Status   Status `json:"status"`
 	ResultId string `json:"resultId,omitempty"`
+	Type     string `json:"type,omitempty"`
 }
