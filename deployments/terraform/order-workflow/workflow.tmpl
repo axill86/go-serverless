@@ -1,11 +1,26 @@
 {
-  "Comment": "A Hello World example of the Amazon States Language using Pass states",
-  "StartAt": "Mock",
+  "Comment": "A state machine for processing orders",
+  "StartAt": "GenerateConfigurations",
   "States": {
-    "Mock": {
-      "Type": "Pass",
-      "Result": "Mock",
-      "End": true
+    "GenerateConfigurations": {
+      "Type": "Task",
+      "Resource": "${generate_configurations_lambda}",
+      "TimeoutSeconds": 300,
+      "Next": "Process"
+    },
+    "Process": {
+       "Type": "Map",
+       "Iterator": {
+            "StartAt": "Print",
+            "States": {
+                "Print": {
+                    "Type": "Pass",
+                    "Result": "$.quantity",
+                    "End": true
+                }
+            }
+       },
+       "End": true
     }
   }
 }

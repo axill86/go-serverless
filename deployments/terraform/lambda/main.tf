@@ -15,7 +15,7 @@ resource "aws_iam_role" "lambda_exec" {
 resource "aws_iam_role_policy" "lambda_inline_policy" {
   policy = var.policy-document
   role = aws_iam_role.lambda_exec.name
-  name = "${var.lambda-name}-dynamodb-policy"
+  name = "${var.lambda-name}-policy"
 }
 
 #Attaching basic execution Policy

@@ -6,10 +6,7 @@ module "order-table" {
   source = "./order-table"
   orders-table-name = var.orders-table-name
 }
-module "order-workflow" {
-  source = "./order-workflow"
-  workflow-name = var.workflow-name
-}
+
 #Inline Policy for order-lambda
 data aws_iam_policy_document "order-lambda-policy" {
   statement {
@@ -58,3 +55,8 @@ module "order-api" {
   handler-function-name = module.order-lambda.lambda-function-name
 }
 
+module "order-workflow" {
+  source = "./order-workflow"
+  workflow-name = var.workflow-name
+  generate-configurations-lambda = module.configurations-lambda.lamda-arn
+}
