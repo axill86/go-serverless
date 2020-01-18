@@ -1,21 +1,16 @@
 package main
 
-import "context"
-
-type item struct {
-	Name     string `json:"name"`
-	Quantity int32  `json:"quantity"`
-}
-type result struct {
-	item
-	Passed bool
-}
+import (
+	"context"
+	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/axill86/go-serverless/internal/dto"
+)
 
 func main() {
-
+	lambda.Start(Handler)
 }
 
 //Handler returns result, which is true if quantity is even
-func Handler(ctxt context.Context, e item) (result, error) {
-	return result{item{Name: e.Name, Quantity: e.Quantity}, e.Quantity%2 == 0}, nil
+func Handler(ctxt context.Context, e dto.Item) (dto.Item, error) {
+	return dto.Item{Name: e.Name, Quantity: e.Quantity, Passed: e.Quantity%2 == 0}, nil
 }

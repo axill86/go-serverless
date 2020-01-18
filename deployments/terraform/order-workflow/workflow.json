@@ -1,0 +1,33 @@
+{
+  "Comment": "A state machine for processing orders",
+  "StartAt": "GenerateConfigurations",
+  "States": {
+    "GenerateConfigurations": {
+      "Type": "Task",
+      "Resource": "${functions.generate-configurations}",
+      "TimeoutSeconds": 300,
+      "Next": "Process"
+    },
+    "Process": {
+      "Type": "Map",
+      "Iterator": {
+        "StartAt": "Calculate",
+        "States": {
+          "Calculate": {
+            "Type": "Task",
+            "Resource": "${functions.validate}",
+            "TimeoutSeconds": 30,
+            "End": true
+          }
+        }
+      },
+      "Next": "Filter"
+    },
+    "Filter": {
+      "Type": "Task",
+      "Resource": "${functions.filter}",
+      "TimeoutSeconds": 300,
+      "End": true
+    }
+  }
+}

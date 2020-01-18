@@ -1,3 +1,5 @@
 variable "workflow-name" {
 }
-variable "generate-configurations-lambda" {}
+variable "functions" {
+  type = map(string)
+}

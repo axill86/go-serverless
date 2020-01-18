@@ -27,6 +27,27 @@ variable "configurations-lambda-filename" {
   default = "dist/generateConfigurations.zip"
 }
 
+//validate lambda
+variable "validate-lambda-name" {
+  default = "validate-item-lambda"
+}
+variable "validate-lambda-handler" {
+  default = "validateItem"
+}
+variable "validate-lambda-filename" {
+  default = "dist/validateItem.zip"
+}
+
+//Filter lambda
+variable "filter-lambda-name" {
+  default = "filter-item-lambda"
+}
+variable "filter-lambda-handler" {
+  default = "filter"
+}
+variable "filter-lambda-filename" {
+  default = "dist/filter.zip"
+}
 //
 variable "workflow-name" {
   default = "order-workflow"

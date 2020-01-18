@@ -1,6 +1,6 @@
 resource "aws_sfn_state_machine" "order-workflow" {
-  definition = templatefile("${path.module}/workflow.tmpl",
-  { "generate_configurations_lambda" : var.generate-configurations-lambda })
+  definition = templatefile("${path.module}/workflow.json",
+  { "functions" : var.functions })
   name       = var.workflow-name
   role_arn   = aws_iam_role.order-workflow-role.arn
 }
@@ -21,7 +21,7 @@ data "aws_iam_policy_document" "workflow-policy-document" {
   statement {
     actions = ["lambda:InvokeFunction"]
     effect = "Allow"
-    resources = [var.generate-configurations-lambda]
+    resources = values(var.functions)
   }
 }
 data "aws_iam_policy_document" "order-workflow-policy" {
