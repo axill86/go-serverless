@@ -1,3 +1,7 @@
+locals {
+  environment_map = var.environment-variables == null ? [] : [var.environment-variables]
+}
+
 resource "aws_lambda_function" "order_lambda" {
   function_name = var.lambda-name
   handler = var.lambda-handler
@@ -5,6 +9,13 @@ resource "aws_lambda_function" "order_lambda" {
   runtime = "go1.x"
   filename = var.lambda-filename
   source_code_hash = filebase64sha256(var.lambda-filename)
+
+  dynamic environment {
+    for_each = local.environment_map
+    content {
+      variables = environment.value
+    }
+  }
 }
 
 resource "aws_iam_role" "lambda_exec" {

@@ -8,7 +8,9 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	ginadapter "github.com/awslabs/aws-lambda-go-api-proxy/gin"
+	"github.com/axill86/go-serverless/cmd/orderApi/config"
 	"github.com/axill86/go-serverless/internal/dto"
+	"github.com/spf13/viper"
 	"log"
 
 	"github.com/axill86/go-serverless/internal/dao"
@@ -23,6 +25,11 @@ var r *gin.Engine
 var ginLambda *ginadapter.GinLambda
 
 func init() {
+	//read config
+	c, err := readConfig()
+	if err != nil {
+		panic(err)
+	}
 	r := gin.Default()
 	//Init order service
 	r.Use(location.Default())
@@ -34,8 +41,19 @@ func init() {
 	}
 	dynamoSession := dynamodb.New(s)
 
-	orderService = service.NewOrderService(dao.NewOrderDao("orders", dynamoSession))
+	orderService = service.NewOrderService(dao.NewOrderDao(c.TableName, dynamoSession))
 	ginLambda = ginadapter.New(r)
+}
+
+//reads configuration for Lambda
+func readConfig() (*config.Config, error) {
+
+	v := viper.New()
+	v.SetEnvPrefix("order")
+	v.AutomaticEnv()
+	c := &config.Config{TableName: v.GetString("table"), Workflow: v.GetString("workflow")}
+	log.Printf("Received config %#v", c)
+	return c, nil
 }
 
 func Handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {

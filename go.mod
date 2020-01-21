@@ -16,8 +16,8 @@ require (
 	github.com/mattn/go-isatty v0.0.11 // indirect
 	github.com/onsi/ginkgo v1.8.0 // indirect
 	github.com/onsi/gomega v1.5.0 // indirect
+	github.com/spf13/viper v1.6.2
 	golang.org/x/sys v0.0.0-20191224085550-c709ea063b76 // indirect
-	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 	gopkg.in/go-playground/validator.v9 v9.31.0 // indirect
 	gopkg.in/yaml.v2 v2.2.7 // indirect
 )

@@ -29,6 +29,10 @@ module "order-lambda" {
   lambda-filename = var.order-lambda-filename
   lambda-handler  = var.order-lambda-handler
   policy-document = data.aws_iam_policy_document.order-lambda-policy.json
+  environment-variables = {
+    ORDER_TABLE = module.order-table.table-name
+    ORDER_WORKFLOW = module.order-workflow.workflow
+  }
 }
 
 data aws_iam_policy_document "base-lambda-policy" {

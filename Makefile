@@ -58,6 +58,7 @@ deploy:
 	terraform apply deployments/terraform
 
 destroy:
+	terraform init deployments/terraform
 	terraform destroy deployments/terraform
 
 
