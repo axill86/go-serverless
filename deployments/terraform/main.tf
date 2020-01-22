@@ -15,6 +15,11 @@ data aws_iam_policy_document "order-lambda-policy" {
     effect    = "Allow"
   }
   statement {
+    actions = ["states:StartExecution"]
+    effect = "Allow"
+    resources = [module.order-workflow.workflow]
+  }
+  statement {
     actions = ["logs:CreateLogGroup",
       "logs:CreateLogStream",
     "logs:PutLogEvents"]

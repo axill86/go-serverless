@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/aws/aws-sdk-go/service/sfn"
 	ginadapter "github.com/awslabs/aws-lambda-go-api-proxy/gin"
 	"github.com/axill86/go-serverless/cmd/orderApi/config"
 	"github.com/axill86/go-serverless/internal/dto"
@@ -40,8 +41,9 @@ func init() {
 		panic(err)
 	}
 	dynamoSession := dynamodb.New(s)
-
-	orderService = service.NewOrderService(dao.NewOrderDao(c.TableName, dynamoSession))
+	workflowSession := sfn.New(s)
+	workflowService := service.NewWorkflowService(workflowSession, c.Workflow)
+	orderService = service.NewOrderService(dao.NewOrderDao(c.TableName, dynamoSession), workflowService)
 	ginLambda = ginadapter.New(r)
 }
 
